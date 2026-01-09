@@ -1,21 +1,74 @@
 package auth
 
+import (
+	"folio/internal/models"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
+)
+
 type authService struct {
-	userRepo UserRepo
-	jwtToken string
+	userRepo  UserRepo
+	jwtSecret string
 }
 
-func NewAuthService(userRepo UserRepo, jwtToken string) *authService {
+func NewAuthService(userRepo UserRepo, secret string) *authService {
 	return &authService{
-		userRepo: userRepo,
-		jwtToken: jwtToken,
+		userRepo:  userRepo,
+		jwtSecret: secret,
 	}
 }
 
 func (a *authService) Register(email, username, password string) (string, error) {
-	return "jwt-token", nil
+	hash, passGenErr := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+	if passGenErr != nil {
+		return "", passGenErr
+	}
+
+	userToCreate := models.User{
+		ID:        uuid.NewString(),
+		Email:     email,
+		Username:  username,
+		Password:  string(hash),
+		CreatedAt: time.Now(),
+	}
+
+	createUserErr := a.userRepo.CreateUser(&userToCreate)
+
+	if createUserErr != nil {
+		return "", createUserErr
+	}
+
+	return a.generateJwt(userToCreate.ID, userToCreate.Email)
 }
 
 func (a *authService) Login(email, password string) (string, error) {
-	return "jwt-token", nil
+	user, err := a.userRepo.GetByEmail(email)
+
+	if err != nil {
+		return "", err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+
+	if err != nil {
+		return "", err
+	}
+
+	return a.generateJwt(user.ID, user.Email)
+}
+
+func (a *authService) generateJwt(userID string, email string) (string, error) {
+	claims := jwt.MapClaims{
+		"id":    userID,
+		"email": email,
+		"exp":   time.Now().Add(time.Hour * 72).Unix(),
+		"iat":   time.Now().Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(a.jwtSecret))
 }

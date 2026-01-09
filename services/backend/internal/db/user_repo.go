@@ -43,7 +43,7 @@ func (r *UserRepo) GetByEmail(email string) (*models.User, error) {
 
 	u := &models.User{}
 	err := r.db.QueryRow(query, email).Scan(
-		&u.Id,
+		&u.ID,
 		&u.Email,
 		&u.Username,
 		&u.Password,

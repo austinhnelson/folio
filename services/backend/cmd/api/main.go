@@ -8,8 +8,6 @@ import (
 )
 
 func main() {
-	jwtSecret := "mysecretkey"
-
 	dbConn, err := db.NewSqLiteDb("./data/folio.db")
 	if err != nil {
 		log.Fatal(err)
@@ -17,7 +15,7 @@ func main() {
 
 	userRepo := db.NewUserRepo(dbConn)
 
-	authService := auth.NewAuthService(userRepo, jwtSecret)
+	authService := auth.NewAuthService(userRepo, "secret-jwt-key")
 
 	authHandler := &auth.AuthHandler{
 		AuthService: authService,

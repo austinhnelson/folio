@@ -1,9 +1,11 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
-	Id        int64
+	ID        string
 	Email     string
 	Username  string
 	Password  string
