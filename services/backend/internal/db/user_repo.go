@@ -15,12 +15,13 @@ func NewUserRepo(db *sql.DB) *UserRepo {
 
 func (r *UserRepo) CreateUser(user *models.User) error {
 	query := `
-		INSERT INTO users (email, username, password_hash, created_at)
-		VALUES (?, ?, ?, ?)
+		INSERT INTO users (id, email, username, password_hash, created_at)
+		VALUES (?, ?, ?, ?, ?)
 	`
 
 	_, err := r.db.Exec(
 		query,
+		user.ID,
 		user.Email,
 		user.Username,
 		user.Password,
