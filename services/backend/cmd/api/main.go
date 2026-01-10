@@ -13,6 +13,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if err := db.RunMigrations(dbConn); err != nil {
+		log.Fatal(err)
+	}
+
 	userRepo := db.NewUserRepo(dbConn)
 
 	authService := auth.NewAuthService(userRepo, "secret-jwt-key")
