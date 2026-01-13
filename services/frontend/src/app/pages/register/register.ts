@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Api } from '../../services/api/api';
+import { User } from '../../services/api/user';
 
 @Component({
   selector: 'app-register',
@@ -6,6 +8,23 @@ import { Component } from '@angular/core';
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
-export class Register {
+export class Register implements OnInit {
+  constructor(private api: Api) {}
 
+  ngOnInit() {
+    this.registerUser();
+  }
+
+  registerUser() {
+    const newUser: User = {
+      username: 'newuser',
+      password: 'password123',
+      email: 'test@test.com'
+    };
+
+    this.api.register(newUser).subscribe({
+      next: (data) => console.log(data),
+      error: (err) => console.error('Error registering user:', err)
+    });
+  }
 }

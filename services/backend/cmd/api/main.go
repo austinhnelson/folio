@@ -3,6 +3,7 @@ package main
 import (
 	"folio/internal/auth"
 	"folio/internal/db"
+	"folio/internal/middleware"
 	"log"
 	"net/http"
 )
@@ -29,6 +30,8 @@ func main() {
 	mux.HandleFunc("/auth/register", authHandler.Register)
 	mux.HandleFunc("/auth/login", authHandler.Login)
 
+	handler := middleware.CorsMiddleware(mux)
+
 	log.Println("Server running on :8080")
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }
