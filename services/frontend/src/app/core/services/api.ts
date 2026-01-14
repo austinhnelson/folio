@@ -15,7 +15,7 @@ export class Api {
     return this.http.post(`${this.baseUrl}/auth/register`, user);
   }
 
-  login (user: Omit<User, "username">): Observable<any> {
+  login (user: Pick<User, 'email' | 'password'>): Observable<any> {
     return this.http.post(`${this.baseUrl}/auth/login`, user);
   }
 }
