@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Api } from '../../services/api/api';
-import { User } from '../../services/api/user';
+import { Api } from '../../core/services/api';
+import { User } from '../../shared/models/user';
 
 @Component({
   selector: 'app-register',
