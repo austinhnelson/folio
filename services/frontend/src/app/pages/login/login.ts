@@ -18,7 +18,6 @@ export class Login implements OnInit {
     };
 
     this.api.login(credentials).subscribe({
-      next: (data) => console.log(data),
       error: (err) => console.error("Error logging in user:", err)
     });
   }

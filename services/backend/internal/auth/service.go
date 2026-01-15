@@ -62,11 +62,11 @@ func (a *authService) Login(email, password string) (string, error) {
 }
 
 func (a *authService) generateJwt(userID string, email string) (string, error) {
-	claims := jwt.MapClaims{
-		"id":    userID,
-		"email": email,
-		"exp":   time.Now().Add(time.Hour * 72).Unix(),
-		"iat":   time.Now().Unix(),
+	claims := jwt.RegisteredClaims{
+		Subject:   userID,
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add((15 * time.Minute))),
+		IssuedAt:  jwt.NewNumericDate(time.Now()),
+		Issuer:    "folio-backend",
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

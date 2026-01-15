@@ -25,10 +25,6 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
-type AuthResponse struct {
-	Token string `json:"token"`
-}
-
 func (authHandler *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	var req RegisterRequest
 
@@ -44,7 +40,17 @@ func (authHandler *AuthHandler) Register(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	json.NewEncoder(w).Encode(AuthResponse{Token: token})
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    token,
+		HttpOnly: true,
+		Secure:   false, // false since local dev. in prod, use true.
+		SameSite: http.SameSiteLaxMode,
+		Path:     "/",
+		MaxAge:   900, // 15 minutes
+	})
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func (authHandler *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
@@ -62,5 +68,15 @@ func (authHandler *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(AuthResponse{Token: token})
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    token,
+		HttpOnly: true,
+		Secure:   false, // false since local dev. in prod, use true.
+		SameSite: http.SameSiteLaxMode,
+		Path:     "/",
+		MaxAge:   900, // 15 minutes
+	})
+
+	w.WriteHeader(http.StatusOK)
 }

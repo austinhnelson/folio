@@ -20,7 +20,6 @@ export class Register implements OnInit {
     };
 
     this.api.register(newUser).subscribe({
-      next: (data) => console.log(data),
       error: (err) => console.error("Error registering user:", err)
     });
   }

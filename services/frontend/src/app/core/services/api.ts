@@ -12,10 +12,10 @@ export class Api {
   constructor(private http: HttpClient) { }
 
   register(user: User): Observable<any> {
-    return this.http.post(`${this.baseUrl}/auth/register`, user);
+    return this.http.post(`${this.baseUrl}/auth/register`, user, { withCredentials: true });
   }
 
   login (user: Pick<User, 'email' | 'password'>): Observable<any> {
-    return this.http.post(`${this.baseUrl}/auth/login`, user);
+    return this.http.post(`${this.baseUrl}/auth/login`, user, { withCredentials: true });
   }
 }
