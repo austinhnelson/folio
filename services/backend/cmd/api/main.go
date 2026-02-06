@@ -3,6 +3,7 @@ package main
 import (
 	"folio/internal/auth"
 	"folio/internal/db"
+	"folio/internal/feed"
 	"folio/internal/middleware"
 	"log"
 	"net/http"
@@ -21,14 +22,23 @@ func main() {
 	userRepo := db.NewUserRepo(dbConn)
 
 	authService := auth.NewAuthService(userRepo, "secret-jwt-key")
-
 	authHandler := &auth.AuthHandler{
 		AuthService: authService,
 	}
 
+	feedService := feed.NewFeedService()
+	feedHandler := &feed.FeedHandler{
+		FeedService: feedService,
+	}
+
 	mux := http.NewServeMux()
+
+	// Unprotected routes
 	mux.HandleFunc("/auth/register", authHandler.Register)
 	mux.HandleFunc("/auth/login", authHandler.Login)
+
+	// Protected routes
+	mux.HandleFunc("/feed", middleware.AuthMiddleware(http.Handler(feedHandler.GetFeed)))
 
 	handler := middleware.CorsMiddleware(mux)
 
